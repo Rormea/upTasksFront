@@ -1,5 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom"
 import useAuth from "../hooks/useAuth"
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
 
 
 
@@ -11,7 +13,22 @@ const ProtectedRoute = () => {
 
     return (
         <div>
-            {auth._id ? <Outlet /> : <Navigate to='/' />}
+            {auth._id
+                ? (
+                    <div className="bg-gay-100" >
+                        <Header />
+
+                        <div className="md:flex md:min-h-screen" >
+                            <Sidebar />
+
+                            <main className="flex-1 p-10 bg-violet-100" >
+                                <Outlet />
+                            </main>
+                        </div>
+
+                    </div>
+                )
+                : <Navigate to='/' />}
         </div>
     )
 }
