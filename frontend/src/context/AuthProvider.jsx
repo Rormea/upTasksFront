@@ -39,7 +39,7 @@ const AuthProvider = ({ children }) => {
                 // console.log(data)
 
                 setAuth(data)
-                navigate('/projects')
+                // navigate('/projects')
 
             } catch (error) {
                 console.log(error)

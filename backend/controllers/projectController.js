@@ -52,14 +52,10 @@ const getOneProject = async (req, res) => {
 
     // Obtener tareas asociadas al proyecto
 
-    const tasksInProject = await TasksM.find().where("projectRef").equals(beProject._id);
+    // const tasksInProject = await TasksM.find().where("projectRef").equals(beProject._id);
 
-    res.json(
-        {
-            beProject,
-            tasksInProject
-        }
-    );
+    // res.json({beProject,tasksInProject});
+    res.json(beProject);
 };
 
 

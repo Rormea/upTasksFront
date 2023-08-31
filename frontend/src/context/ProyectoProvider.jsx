@@ -12,12 +12,19 @@ const ProyectosProvider = ({ children }) => {
 
 
     const [projects, setProjects] = useState([]);
+    const [projetAlone, setProjetAlone] = useState({})
     const [alert, setAlert] = useState({})
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false)
 
+
+
+    // const navigate = useNavigate();
+
+
+    // cuando cargue este component va a traer la data de todos los proyects 
     useEffect(() => {
 
-        const getProject = async () => {
+        const getAllProjectShow = async () => {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) return
@@ -37,7 +44,7 @@ const ProyectosProvider = ({ children }) => {
             }
         };
 
-        getProject();
+        getAllProjectShow();
     });
 
 
@@ -50,6 +57,8 @@ const ProyectosProvider = ({ children }) => {
         }, 3000)
     };
 
+
+    // Submit
     const submitProject = async project => {
 
         try {
@@ -77,6 +86,33 @@ const ProyectosProvider = ({ children }) => {
         }
     };
 
+    /// Obtener proyecto por id
+
+    const getProject = async (id) => {
+
+        setLoading(true);
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const { data } = await clientAxios.get(`/projects/${id}`, config);
+            setProjetAlone(data)
+
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+    };
 
 
     return (
@@ -85,9 +121,12 @@ const ProyectosProvider = ({ children }) => {
 
             value={{
                 projects,
+                projetAlone,
                 showAlert,
                 alert,
                 submitProject,
+                getProject,
+                loading
             }}
         >
             {children}

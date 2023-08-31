@@ -35,6 +35,7 @@ function App() {
               <Route path='new-project' element={<NewProject />} />
               <Route path=':id' element={<Project />} />
 
+
             </Route>
           </Routes>
         </ProyectosProvider>
