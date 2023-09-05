@@ -8,6 +8,7 @@ const Projects = () => {
 
     const { projects } = useProjects();
 
+
     return (
         <div>
             <h1 className='text-4xl font-black' >Proyectos</h1>

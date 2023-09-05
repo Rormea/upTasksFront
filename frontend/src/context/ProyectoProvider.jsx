@@ -15,6 +15,8 @@ const ProyectosProvider = ({ children }) => {
     const [projetAlone, setProjetAlone] = useState({})
     const [alert, setAlert] = useState({})
     const [loading, setLoading] = useState(false)
+    const [modalFormTask, setModalFormTask] = useState(false)
+    const [taskPro, setTaskPro] = useState({})
 
 
 
@@ -61,6 +63,13 @@ const ProyectosProvider = ({ children }) => {
     // Submit
     const submitProject = async project => {
 
+        // if (project.paramsId) {
+        //     updatingProject(project);
+        // } else {
+        //     newProject(project);
+        // }
+        // return
+
         try {
 
             const token = localStorage.getItem('token');
@@ -73,18 +82,87 @@ const ProyectosProvider = ({ children }) => {
                 }
             };
 
-            // const { data } = await clientAxios.post('/projects', project, config);
-            // console.log(data);
-            await clientAxios.post('/projects', project, config);
+
+            if (project.paramsId) {
+                const { data } = await clientAxios.put(`/projects/${project.paramsId}`, project, config);
+                setProjects([...projects, data]);
+            } else {
+                const { data } = await clientAxios.post('/projects', project, config);
+                setProjects([...projects, data]);
+            }
+
+
             showAlert({
-                msg: "Proyecto Creado Correctamente",
+                msg: project.paramsId ? 'Proyecto Actualizado Correctamente' : 'Proyecto Creado Correctamente',
+
                 error: false
             })
 
         } catch (error) {
             console.log(error)
         }
+
+
     };
+
+
+    // const updatingProject = async (project) => {
+
+    // try {
+
+    //     const token = localStorage.getItem('token');
+    //     if (!token) return
+
+    //     const config = {
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${token}`
+    //         }
+    //     };
+
+    //     const { data } = await clientAxios.put(`/projects/${project.paramsId}`, project, config);
+    //     console.log(data);
+    //     setProjects([...projects, data]);
+
+
+    //     showAlert({
+    //         msg: "Proyecto Actualizado Correctamente",
+    //         error: false
+    //     })
+
+    // } catch (error) {
+    //     console.log(error)
+    // }
+    // };
+
+    // const newProject = async (project) => {
+
+    //     try {
+
+    //         const token = localStorage.getItem('token');
+    //         if (!token) return
+
+    //         const config = {
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         };
+
+    //         const { data } = await clientAxios.post('/projects', project, config);
+    //         console.log(data);
+    //         setProjects([...projects, data]);
+
+
+    //         showAlert({
+    //             msg: "Proyecto Creado Correctamente",
+    //             error: false
+    //         })
+
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // };
 
     /// Obtener proyecto por id
 
@@ -115,6 +193,89 @@ const ProyectosProvider = ({ children }) => {
     };
 
 
+    // Borrar proyecto
+
+    const deleteProject = async (id) => {
+
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const { data } = await clientAxios.delete(`/projects/${id}`, config);
+            setProjects([...projects, data]);
+
+
+            showAlert({
+                msg: "Proyecto Eliminado",
+                error: false
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
+
+    // Para poder utilizar el Modal en el Global
+
+    const handleModalTask = () => {
+        setModalFormTask(!modalFormTask);
+        setTaskPro({})
+    };
+
+    // Para hacer el submmit de tarea
+
+    const submitTask = async (task) => {
+
+        // setLoading(true);
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const { data } = await clientAxios.post(`/tasks`, task, config);
+            // actulizar el proyecto con las nuevas tareas
+
+            const tasksInProject = { ...projetAlone }
+            tasksInProject.tasks = [...projetAlone.tasks, data]
+
+            setProjetAlone(tasksInProject)
+
+            setAlert({})
+            setModalFormTask(false);
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
+
+    };
+
+
+    // Editar tarea de
+
+    const handleModalUpdateTask = (task) => {
+        // console.log(task)
+        setTaskPro(task)
+        setModalFormTask(true)
+    };
+
     return (
 
         <ProyectosContext.Provider
@@ -126,7 +287,13 @@ const ProyectosProvider = ({ children }) => {
                 alert,
                 submitProject,
                 getProject,
-                loading
+                loading,
+                deleteProject,
+                modalFormTask,
+                handleModalTask,
+                submitTask,
+                handleModalUpdateTask,
+                taskPro,
             }}
         >
             {children}

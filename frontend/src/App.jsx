@@ -1,10 +1,14 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import AuthLayout from './layouts/AuthLayout'
-import { Login, SingUp, RecoveryPassword, PasswordNew, ConfirmAccount, Projects, NewProject, Project } from './pages'
+import {
+  Login, SingUp, RecoveryPassword, PasswordNew, ConfirmAccount, Projects, NewProject,
+  Project, EditProject
+} from './pages'
 
 import { AuthProvider } from './context/AuthProvider'
 import { ProyectosProvider } from './context/ProyectoProvider'
 import ProtectedRoute from './layouts/ProtectedRoute'
+
 
 
 
@@ -34,6 +38,7 @@ function App() {
               <Route index element={<Projects />} />
               <Route path='new-project' element={<NewProject />} />
               <Route path=':id' element={<Project />} />
+              <Route path='update/:id' element={<EditProject />} />
 
 
             </Route>

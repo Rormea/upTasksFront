@@ -12,7 +12,10 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [alert, setAlert] = useState({});
 
+    const navigate = useNavigate();
+
     const { setAuth } = useAuth();
+
 
 
     const handlerSubmit = async (e) => {
@@ -41,8 +44,11 @@ const Login = () => {
             setAlert({});
             localStorage.setItem('token', data.token);
             setAuth(data)
+            console.log(data)
+            navigate('/projects')
 
         } catch (error) {
+            console.log(error);
             setAlert({ msg: error.response.data.msg, error: true });
         }
     };

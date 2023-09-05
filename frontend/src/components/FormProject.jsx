@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import useProjects from '../hooks/useProjects';
 import Alert from './Alert';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 
 
@@ -13,18 +15,45 @@ const FormProject = () => {
         deadline: '',
     }
 
+
+
     const [valuePro, setValuePro] = useState(initialProjectState)
+    const [paramsId, setParamsId] = useState(null)
+
+    const params = useParams();
+
+
+    /////////////////////////////////////////////////////////
+
+    const { showAlert, alert, submitProject, projetAlone } = useProjects();
+
+    /////////////////////////////////////////////////////////////////    
+
+    useEffect(() => {
+        if (params.id && projetAlone) {
+
+            const projectUpdated = {
+                name: projetAlone.name,
+                description: projetAlone.description,
+                client: projetAlone.client,
+                deadline: projetAlone.deadline.split('T')[0],
+            }
+            setValuePro(projectUpdated)
+            setParamsId(params.id)
+        } else {
+            console.log("nuevo project")
+        }
+    }, [params])
+
 
     const handleChange = (e) => {
         const value = e.target.value
         const key = e.target.name
         setValuePro({ ...valuePro, [key]: value })
     };
-    /////////////////////////////////////////////////////////
 
-    const { showAlert, alert, submitProject } = useProjects();
 
-    /////////////////////////////////////////////////////////////////    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -37,9 +66,10 @@ const FormProject = () => {
             return
         };
         // pasar todo al provider
-        await submitProject(valuePro);
+        await submitProject({ ...valuePro, paramsId });
 
         setValuePro(initialProjectState)
+        setParamsId(null);
     };
 
 
@@ -108,7 +138,7 @@ const FormProject = () => {
 
             <input
                 type="submit"
-                value='Crear Proyecto'
+                value={paramsId ? 'Actualizar Proyecto' : 'Crear Proyecto'}
                 className=' py-2 mt-8 bg-sky-600 w-full uppercase font-bold text-white rounded-md
                 cursor-pointer hover:bg-sky-800 transition-color'
             />

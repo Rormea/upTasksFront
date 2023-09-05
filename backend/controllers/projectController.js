@@ -39,7 +39,7 @@ const getOneProject = async (req, res) => {
         return res.status(404).json({ msg: error.message })
     };
     //Validar que el proyecto con ese id existe
-    const beProject = await ProjectM.findById(id);
+    const beProject = await ProjectM.findById(id).populate('tasks');
     if (!beProject) {
         const error = new Error('id not found');
         return res.status(404).json({ msg: error.message })

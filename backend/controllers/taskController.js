@@ -30,6 +30,9 @@ const newTask = async (req, res) => {
         // const newTask = new TasksM(body)
         // const newTaskDb = await newTask.save() esta una forma abajo otra
         const createTaskDb = await TasksM.create(body)
+        // almacenar el id del proyecto en la tarea (infor cruzada o relacionada)
+        beProject.tasks.push(createTaskDb._id);
+        await beProject.save();
         res.json(createTaskDb)
     } catch (error) {
         console.log(error)
