@@ -248,13 +248,28 @@ const ProyectosProvider = ({ children }) => {
                 }
             };
 
-            const { data } = await clientAxios.post(`/tasks`, task, config);
-            // actulizar el proyecto con las nuevas tareas
+            console.log(!taskPro._id)
+            if (!taskPro._id) {
+                const { data } = await clientAxios.post(`/tasks`, task, config);
+                // actulizar el proyecto con las nuevas tareas
+                const tasksInProject = { ...projetAlone }
+                tasksInProject.tasks = [...projetAlone.tasks, data]
+                setProjetAlone(tasksInProject)
+            } else {
+                const idTask = taskPro._id
+                const { data } = await clientAxios.put(`/tasks/${idTask}`, task, config)
+                // console.log(taskPro, idTask, task)
+                // console.log(data)
+                // console.log(projetAlone)
+                const projectWithTaskUpdated = { ...projetAlone }
+                // // el objeto proyectoAlone tiene dentro un array que son las tareas
+                projectWithTaskUpdated.tasks = projectWithTaskUpdated.tasks.map(el => el._id === data._id ? data : el)
+                // console.log(projectWithTaskUpdated)
+                // em map dice que va iterar por ese arreglo de tareas dentro del proyecto, si el id es el mismo va chancar los datos
+                // con la nueva data y si no es igual simplmente va dejar la tarea tal cual
+                setProjetAlone(projectWithTaskUpdated)
 
-            const tasksInProject = { ...projetAlone }
-            tasksInProject.tasks = [...projetAlone.tasks, data]
-
-            setProjetAlone(tasksInProject)
+            }
 
             setAlert({})
             setModalFormTask(false);

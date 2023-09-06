@@ -24,9 +24,10 @@ const ModalFormTask = () => {
     const { modalFormTask, handleModalTask, showAlert, alert, submitTask, taskPro } = useProjects();
 
     useEffect(() => {
-        // console.log(taskPro)
+
         if (taskPro?._id) {
-            setTask(taskPro);
+            const datePro = taskPro.deadline?.split('T')[0]
+            setTask({ ...taskPro, deadline: datePro });
             return
         }
 
@@ -40,8 +41,6 @@ const ModalFormTask = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log(Object.values(task))
-        console.log(Object.values(task).includes(''))
         e.preventDefault();
         if (Object.values(task).includes('')) {
 
@@ -175,7 +174,7 @@ const ModalFormTask = () => {
                                         <input type="submit"
                                             className='bg-sky-600 hover:bg-sky-700 w-full p-3 text-white
                                             font-bold cursor-pointer transition-colors rounded-md uppercase'
-                                            value='Crear Tarea'
+                                            value={taskPro?._id ? 'Guardar Cambios' : 'Crear Tarea'}
                                         />
                                     </form>
                                 </div>
