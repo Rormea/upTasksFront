@@ -17,6 +17,7 @@ const ProyectosProvider = ({ children }) => {
     const [loading, setLoading] = useState(false)
     const [modalFormTask, setModalFormTask] = useState(false)
     const [taskPro, setTaskPro] = useState({})
+    const [modalDeleteTask, setModalDeleteTask] = useState(false)
 
 
 
@@ -248,7 +249,8 @@ const ProyectosProvider = ({ children }) => {
                 }
             };
 
-            console.log(!taskPro._id)
+            // console.log(!taskPro._id) da respuest true  dice si en task pro que es cuando doy click en editar no hay id quiere decir 
+            //que no es editar es true ejecuta crear tarea si es false (else) ejecuta actulizar tarea
             if (!taskPro._id) {
                 const { data } = await clientAxios.post(`/tasks`, task, config);
                 // actulizar el proyecto con las nuevas tareas
@@ -291,6 +293,49 @@ const ProyectosProvider = ({ children }) => {
         setModalFormTask(true)
     };
 
+    // Eliminar tarea
+    const handleModalDeleteTask = (task) => {
+        setTaskPro(task)
+        setModalDeleteTask(!modalDeleteTask)
+
+    };
+
+    //borrar tarea
+    const deleteTask = async () => {
+
+        // console.log(taskPro)
+        // return
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const idTask = taskPro._id
+
+            const { data } = await clientAxios.delete(`/tasks/${idTask}`, config);
+            const projectWithTaskDeleted = { ...projetAlone }
+            projectWithTaskDeleted.tasks = projectWithTaskDeleted.tasks.filter(el => el._id !== idTask)
+            setProjetAlone(projectWithTaskDeleted)
+            setModalDeleteTask(false)
+            setTaskPro({})
+
+            showAlert({
+                msg: "Tarea Eliminada",
+                error: false
+            })
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
     return (
 
         <ProyectosContext.Provider
@@ -309,6 +354,10 @@ const ProyectosProvider = ({ children }) => {
                 submitTask,
                 handleModalUpdateTask,
                 taskPro,
+                modalDeleteTask,
+                handleModalDeleteTask,
+                deleteTask,
+
             }}
         >
             {children}

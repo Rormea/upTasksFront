@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import useProjects from '../hooks/useProjects';
-import ModalFormTask from '../components/ModalFormTask';
 import Task from '../components/Task';
+import ModalFormTask from '../components/ModalFormTask';
+import ModalDeleteTask from '../components/ModalDeleteTask';
+import Alert from '../components/Alert';
 
 
 const Project = () => {
 
     const params = useParams();
 
-    const { getProject, projetAlone, loading, handleModalTask } = useProjects();
+    const { getProject, projetAlone, loading, handleModalTask, alert } = useProjects();
 
 
     useEffect(() => {
@@ -22,6 +24,8 @@ const Project = () => {
 
 
     if (loading) return "Cargando..."
+
+    const { msg } = alert
 
     return (
         <div>
@@ -49,6 +53,8 @@ const Project = () => {
 
             <p className='font-bold text-xl mt-10' >Taras del Proyecto</p>
 
+            {msg && <Alert alert={alert} />}
+
             <div className='bg-white shadow mt-10 rounded-lg' >
                 {projetAlone.tasks?.length ?
                     projetAlone.tasks?.map(task => (
@@ -58,6 +64,7 @@ const Project = () => {
             </div>
 
             <ModalFormTask />
+            <ModalDeleteTask />
 
         </div>
 

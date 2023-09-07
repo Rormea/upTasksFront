@@ -3,7 +3,7 @@ import useProjects from '../hooks/useProjects'
 
 const Task = ({ task }) => {
 
-    const { handleModalUpdateTask } = useProjects();
+    const { handleModalUpdateTask, handleModalDeleteTask } = useProjects();
 
     return (
         <div className='border-b  lg:p-5  items-center flex flex-col lg:flex-row" ' >
@@ -20,7 +20,7 @@ const Task = ({ task }) => {
                     ? (<button className='bg-sky-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 ' >Completa</button>)
                     : (<button className='bg-gray-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 ' >Incompleta</button>)
                 }
-                <button className='bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 ' >Eleminar</button>
+                <button className='bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 ' onClick={() => handleModalDeleteTask(task)}  >Eleminar</button>
             </div>
         </div>
     )
