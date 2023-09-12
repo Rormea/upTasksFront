@@ -4,9 +4,9 @@ import {
     getOneProject,
     editProject,
     deleteProject,
+    searchCoworker,
     addCoworker,
     deleteCoworker,
-    getTask
 } from '../controllers/projectController.js';
 import checkAuth from '../middleware/checkAuth.js';
 import express from "express";
@@ -23,10 +23,11 @@ router.route('/:id')
     .put(checkAuth, editProject)
     .delete(checkAuth, deleteProject)
 
-router.post('/add-coworker/id', checkAuth, addCoworker);
-router.post('/add-coworker/id', checkAuth, deleteCoworker);
+router.post('/coworkers', checkAuth, searchCoworker);
+router.post('/coworkers/:id', checkAuth, addCoworker);
+router.delete('/coworkers/:id', checkAuth, deleteCoworker);
 
-router.get('/tasks/:id', checkAuth, getTask)
+// router.get('/tasks/:id', checkAuth, getTask)
 
 
 

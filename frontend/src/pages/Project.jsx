@@ -63,6 +63,11 @@ const Project = () => {
                     : 'No hay tareas'}
             </div>
 
+            <div className='flex items-center justify-between mt-10' >
+                <p className='font-bold text-xl'  >Colaboradores</p>
+                <Link to={`/projects/new-coworker/${projetAlone._id}`} className='text-gray-400 uppercase hover:text-black font-bold '>Añadir</Link>
+            </div>
+
             <ModalFormTask />
             <ModalDeleteTask />
 

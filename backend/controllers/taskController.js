@@ -143,8 +143,13 @@ const deleteTask = async (req, res) => {
     }
 
     try {
+        // console.log(beTask.projectRef.tasks)
+        beTask.projectRef.tasks.pop(id);
+        await beTask.projectRef.save();
+        // hay que elinar la tarea del Db de Tareas pero tbm hay que sacaral del [] de tareas del proyecto
         await beTask.deleteOne()
         res.json({ msg: 'Task deleted successfully' })
+
     } catch (error) {
         console.log(error)
     }

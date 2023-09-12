@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import ProjectM from "../models/ProjectModel.js";
 import TasksM from "../models/TasksModel.js";
+import UserM from "../models/UserModel.js";
 
 
 const getProjects = async (req, res) => {
@@ -116,7 +117,10 @@ const deleteProject = async (req, res) => {
         return res.status(401).json({ msg: error.message })
     }
 
+    // Si booro un proyecto deben boorarse las tareas de TasksM
+
     try {
+
         await beProject.deleteOne();
         res.json({ msg: 'Project deleted successfully' });
 
@@ -125,11 +129,75 @@ const deleteProject = async (req, res) => {
     }
 };
 
-const addCoworker = async (req, res) => { };
+const searchCoworker = async (req, res) => {
+    const { email } = req.body
+
+    const beuser = await UserM.findOne({ email }).select('-confirm -createdAt -password -token -updatedAt -__v')
+    if (!beuser) {
+        const error = new Error(`User ${email} not found`);
+        return res.status(404).json({ msg: error.message })
+    }
+
+    res.json(beuser)
+};
+
+const addCoworker = async (req, res) => {
+
+    const { id } = req.params
+
+    // validadr que el id sea en formato MONGOOSE ID
+    const idFormatMongoose = mongoose.Types.ObjectId.isValid(id)
+    if (idFormatMongoose == false) {
+        const error = new Error('id invalid format');
+        return res.status(404).json({ msg: error.message })
+    };
+    //Validar que el proyecto con ese id existe
+    const beProject = await ProjectM.findById(id);
+    if (!beProject) {
+        const error = new Error('id not found');
+        return res.status(404).json({ msg: error.message })
+    };
+    // Validar que el usuario que solicita sea el mismo creador del proyecto
+    if (beProject.owner.toString() !== req.userReq._id.toString()) {
+        const error = new Error('You are not the owner of this project');
+        return res.status(401).json({ msg: error.message })
+    }
+
+    // Busca el uaurio por email
+    const { email } = req.body
+    const beuser = await UserM.findOne({ email }).select('-confirm -createdAt -password -token -updatedAt -__v')
+    if (!beuser) {
+        const error = new Error(`User ${email} not found`);
+        return res.status(404).json({ msg: error.message })
+    }
+
+    // Un colaborador no puede ser admin del proyecto
+    if (beProject.owner.toString() === beuser._id.toString()) {
+        const error = new Error('The project owner cannot be added as a coworker');
+        return res.status(401).json({ msg: error.message })
+    }
+
+    // validar si el correo que estoy agregando como coworker  ya es parte de los coworkers agreados
+    if (beProject.coworkers.includes(beuser._id)) {
+        const error = new Error('The user is currently a coworker');
+        return res.status(401).json({ msg: error.message })
+    }
+
+    // Por fin si posan todas estas validaciones 
+    try {
+        beProject.coworkers.push(beuser._id);
+        await beProject.save();
+        res.json({ msg: 'coworker added successfully' })
+    } catch (error) {
+        console.log(error)
+    }
+
+
+
+    console.log(req.body)
+};
 
 const deleteCoworker = async (req, res) => { };
-
-const getTask = async (req, res) => { };
 
 
 export {
@@ -138,7 +206,7 @@ export {
     getOneProject,
     editProject,
     deleteProject,
+    searchCoworker,
     addCoworker,
     deleteCoworker,
-    getTask
 }

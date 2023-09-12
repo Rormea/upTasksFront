@@ -18,6 +18,7 @@ const ProyectosProvider = ({ children }) => {
     const [modalFormTask, setModalFormTask] = useState(false)
     const [taskPro, setTaskPro] = useState({})
     const [modalDeleteTask, setModalDeleteTask] = useState(false)
+    const [coworker, setCoworker] = useState({})
 
 
 
@@ -198,6 +199,10 @@ const ProyectosProvider = ({ children }) => {
 
     const deleteProject = async (id) => {
 
+        const idTask = projetAlone.tasks.map(task => task._id)
+        // console.log(idTask)
+        // el proeycto viene con us tareas que es un [{},{},...] vamos a sacar otro [] de solo los _id
+
         try {
 
             const token = localStorage.getItem('token');
@@ -210,8 +215,16 @@ const ProyectosProvider = ({ children }) => {
                 }
             };
 
+            // Eliminar las tareas asociadas a ese proyecto
+            idTask.map(async el => (
+                await clientAxios.delete(`/tasks/${el}`, config)
+            ));
+
+            // Ahora si elinar el proyecto
             const { data } = await clientAxios.delete(`/projects/${id}`, config);
             setProjects([...projects, data]);
+
+
 
 
             showAlert({
@@ -320,8 +333,10 @@ const ProyectosProvider = ({ children }) => {
             const idTask = taskPro._id
 
             const { data } = await clientAxios.delete(`/tasks/${idTask}`, config);
+
             const projectWithTaskDeleted = { ...projetAlone }
             projectWithTaskDeleted.tasks = projectWithTaskDeleted.tasks.filter(el => el._id !== idTask)
+            console.log(projectWithTaskDeleted)
             setProjetAlone(projectWithTaskDeleted)
             setModalDeleteTask(false)
             setTaskPro({})
@@ -331,9 +346,94 @@ const ProyectosProvider = ({ children }) => {
                 error: false
             })
 
+            setAlert({})
+
         } catch (error) {
             console.log(error)
         }
+    };
+
+    const submitCoworker = async (emailCoworker) => {
+
+        // console.log(emailCoworker)
+        // return
+        setLoading(true);
+
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const { data } = await clientAxios.post(`/projects/coworkers`, { email: emailCoworker }, config);
+            // console.log(data)
+
+            setCoworker(data);
+            setAlert({});
+
+            // showAlert({
+            //     msg: "Tarea Eliminada",
+            //     error: false
+            // })
+
+        } catch (error) {
+            showAlert({
+                msg: error.response.data.msg,
+                error: true
+            })
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    //// Agregar  colaborador ////////////
+
+    const addCoworker = async (email) => {
+
+        // console.log(projetAlone)
+        setLoading(true);
+
+        const idProject = projetAlone._id
+        console.log(idProject)
+
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const { data } = await clientAxios.post(`/projects/coworkers/${idProject}`, email, config);
+            console.log(data)
+
+            showAlert({
+                msg: data.msg,
+                error: false
+            })
+
+            setCoworker({});
+
+        } catch (error) {
+            showAlert({
+                msg: error.response.data.msg,
+                error: true
+            })
+        } finally {
+            setLoading(false);
+        }
+
+
     };
 
     return (
@@ -357,6 +457,9 @@ const ProyectosProvider = ({ children }) => {
                 modalDeleteTask,
                 handleModalDeleteTask,
                 deleteTask,
+                submitCoworker,
+                coworker,
+                addCoworker,
 
             }}
         >
