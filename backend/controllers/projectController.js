@@ -8,7 +8,16 @@ const getProjects = async (req, res) => {
 
     const { userReq } = req
 
-    const projects = await ProjectM.find().where('owner').equals(userReq);
+    const projects = await ProjectM.find({
+        '$or': [
+            { 'coworkers': { $in: userReq } },
+            { 'owner': { $in: userReq } }
+        ]
+    })
+        // con el código de arriba ya no hago el where - equals   
+        // .where('owner')
+        // .equals(userReq)
+        .select("-tasks");
 
     res.json(projects)
 };
@@ -40,14 +49,21 @@ const getOneProject = async (req, res) => {
         return res.status(404).json({ msg: error.message })
     };
     //Validar que el proyecto con ese id existe
-    const beProject = await ProjectM.findById(id).populate('tasks');
+    const beProject = await ProjectM.findById(id)
+        .populate('tasks')
+        .populate('coworkers', 'name email');
     if (!beProject) {
         const error = new Error('id not found');
         return res.status(404).json({ msg: error.message })
     };
     // Validar que el usuario que solicita sea el mismo creador del proyecto
-    if (beProject.owner.toString() !== req.userReq._id.toString()) {
-        const error = new Error('You are not the owner of this project');
+    if (beProject.owner.toString() !== req.userReq._id.toString() &&
+        //dice si no es el dueño del proeycto quien quiere verlo accion no valida 
+        !beProject.coworkers.some(coworker => coworker._id.toString() === req.userReq._id.toString())
+        // aqui valida que si laguno de la lista de id de colaboradores coinciade con el  id del path y miega todo
+        // Dice si no es colaborador del proeycto accion no valida
+    ) {
+        const error = new Error('You are not the owner || coworker of this project');
         return res.status(401).json({ msg: error.message })
     }
 
@@ -163,7 +179,7 @@ const addCoworker = async (req, res) => {
         return res.status(401).json({ msg: error.message })
     }
 
-    // Busca el uaurio por email
+    // Validar que el usuario que busco por mail exiat en la base de datos
     const { email } = req.body
     const beuser = await UserM.findOne({ email }).select('-confirm -createdAt -password -token -updatedAt -__v')
     if (!beuser) {
@@ -171,7 +187,7 @@ const addCoworker = async (req, res) => {
         return res.status(404).json({ msg: error.message })
     }
 
-    // Un colaborador no puede ser admin del proyecto
+    // Validar que el mismo dueño del proyecto no se pueda agregar como coworker
     if (beProject.owner.toString() === beuser._id.toString()) {
         const error = new Error('The project owner cannot be added as a coworker');
         return res.status(401).json({ msg: error.message })
@@ -192,12 +208,40 @@ const addCoworker = async (req, res) => {
         console.log(error)
     }
 
-
-
-    console.log(req.body)
 };
 
-const deleteCoworker = async (req, res) => { };
+// Para eliminar colaborador del proyecto
+
+const deleteCoworker = async (req, res) => {
+    const { id } = req.params
+
+    // validadr que el id sea en formato MONGOOSE ID
+    const idFormatMongoose = mongoose.Types.ObjectId.isValid(id)
+    if (idFormatMongoose == false) {
+        const error = new Error('id invalid format');
+        return res.status(404).json({ msg: error.message })
+    };
+    //Validar que el proyecto con ese id existe
+    const beProject = await ProjectM.findById(id);
+    if (!beProject) {
+        const error = new Error('id not found');
+        return res.status(404).json({ msg: error.message })
+    };
+    // Validar que el usuario que solicita sea el mismo creador del proyecto
+    if (beProject.owner.toString() !== req.userReq._id.toString()) {
+        const error = new Error('You are not the owner of this project');
+        return res.status(401).json({ msg: error.message })
+    }
+    // Despues de validar procedemos a eliminar un coworker
+    try {
+        beProject.coworkers.pull(req.body.id);
+        await beProject.save();
+        res.json({ msg: 'coworker deleted successfully' })
+    } catch (error) {
+        console.log(error)
+    }
+
+};
 
 
 export {

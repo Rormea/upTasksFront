@@ -144,10 +144,12 @@ const deleteTask = async (req, res) => {
 
     try {
         // console.log(beTask.projectRef.tasks)
-        beTask.projectRef.tasks.pop(id);
-        await beTask.projectRef.save();
+        beTask.projectRef.tasks.pull(id);
+        // await beTask.projectRef.save();
         // hay que elinar la tarea del Db de Tareas pero tbm hay que sacaral del [] de tareas del proyecto
-        await beTask.deleteOne()
+        // await beTask.deleteOne()
+        // un await seguido de otro bloquea por lo que haremos un Primise all settle
+        await Promise.allSettled([await beTask.projectRef.save(), await beTask.deleteOne()])
         res.json({ msg: 'Task deleted successfully' })
 
     } catch (error) {
@@ -155,7 +157,47 @@ const deleteTask = async (req, res) => {
     }
 };
 
-const upDateStateTask = async (req, res) => { };
+const upDateStateTask = async (req, res) => {
+
+    const { id } = req.params
+
+    // validadr que el id sea en formato MONGOOSE ID
+    const idFormatMongoose = mongoose.Types.ObjectId.isValid(id)
+    if (idFormatMongoose == false) {
+        const error = new Error('invalid format  => idFormatMongoose');
+        return res.status(404).json({ msg: error.message })
+    };
+
+    const beTask = await TasksM.findById(id).populate('projectRef');
+
+    // Cuando hago eñ pupulete en lugar de solo tomar los if de proyecto de referenica TOMA TODO el objeto del Project
+    // por eso puedo sacar betask.projectRef.  ---->>  _id, name, state, owner y todo lo que tenga 
+
+    if (!beTask) {
+        const error = new Error('Task not found');
+        return res.status(404).json({ msg: error.message });
+    }
+
+    if (beTask.projectRef.owner.toString() !== req.userReq._id.toString() &&
+        //dice si no es el dueño del proeycto quien quiere cambiar el estado de la tarea accion no valida 
+        !beTask.projectRef.coworkercoworkers.some(coworker => coworker._id.toString() === req.userReq._id.toString())
+        // aqui valida que si laguno de la lista de id de colaboradores coinciade con el  id del path y miega todo
+        // Dice si no es colaborador del proeycto accion no valida
+    ) {
+        const error = new Error('You are not the owner || coworker of this project');
+        return res.status(401).json({ msg: error.message })
+    }
+
+    try {
+        beTask.state = !beTask.state
+        await beTask.save()
+        res.json(beTask)
+
+
+    } catch (error) {
+        console.log(error)
+    }
+};
 
 
 export {

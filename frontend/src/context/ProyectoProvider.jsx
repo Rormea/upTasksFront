@@ -19,6 +19,9 @@ const ProyectosProvider = ({ children }) => {
     const [taskPro, setTaskPro] = useState({})
     const [modalDeleteTask, setModalDeleteTask] = useState(false)
     const [coworker, setCoworker] = useState({})
+    const [modalDeleteCoworker, setModalDeleteCoworker] = useState(false)
+
+    const navigate = useNavigate();
 
 
 
@@ -186,9 +189,24 @@ const ProyectosProvider = ({ children }) => {
             const { data } = await clientAxios.get(`/projects/${id}`, config);
             setProjetAlone(data)
 
+            showAlert({
+                msg: data.msg,
+                error: false
+            })
+
 
         } catch (error) {
-            console.log(error)
+            navigate('/projects')
+            // showAlert({
+            //     msg: error.response.data.msg,
+            //     error: true
+            // })
+            // no usamos showAlert aqui porque ya tiene un tiempo para que la alerta de error desaraezca
+            // y como el error aqui no deberia dar acceso a nada necesito que el mesaje de error persista 
+            setAlert({
+                msg: error.response.data.msg,
+                error: true
+            })
         } finally {
             setLoading(false)
         }
@@ -249,7 +267,7 @@ const ProyectosProvider = ({ children }) => {
 
     const submitTask = async (task) => {
 
-        // setLoading(true);
+        setLoading(true);
         try {
 
             const token = localStorage.getItem('token');
@@ -400,7 +418,7 @@ const ProyectosProvider = ({ children }) => {
         setLoading(true);
 
         const idProject = projetAlone._id
-        console.log(idProject)
+        // console.log(idProject)
 
         try {
 
@@ -436,6 +454,99 @@ const ProyectosProvider = ({ children }) => {
 
     };
 
+
+    // Modal para eliminar Coworker
+    const handleModalDeleteCoworker = (coworker) => {
+        setModalDeleteCoworker(!modalDeleteCoworker)
+        setCoworker(coworker)
+    };
+
+    // Eliminar colaborador
+
+    const deleteCoworker = async () => {
+
+
+
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+            const idCoworker = coworker._id
+
+            const { data } = await clientAxios.post(`/projects/delete-coworker/${projetAlone._id}`, { id: idCoworker }, config);
+
+
+            const projectUpdatedCoworker = { ...projetAlone }
+            projectUpdatedCoworker.coworkers = projectUpdatedCoworker.coworkers.filter(el => el._id !== idCoworker)
+            setProjetAlone(projectUpdatedCoworker)
+            setModalDeleteCoworker(false)
+            setCoworker({})
+
+
+            showAlert({
+                msg: "Colaborador Eliminado",
+                error: false
+            })
+
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
+    // Cambiar tarea completa / incomplete
+
+    const taskCompleted = async (id) => {
+
+        setLoading(true);
+
+        try {
+
+            const token = localStorage.getItem('token');
+            if (!token) return
+
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+
+
+            const { data } = await clientAxios.post(`/tasks/state/${id}`, {}, config);
+
+
+            const projectWithTaskStateUpdated = { ...projetAlone }
+            // // el objeto proyectoAlone tiene dentro un array que son las tareas
+            projectWithTaskStateUpdated.tasks = projectWithTaskStateUpdated.tasks.map(el => el._id === data._id ? data : el)
+            setProjetAlone(projectWithTaskStateUpdated)
+            setTaskPro({})
+
+            showAlert({
+                msg: data.msg,
+                error: false
+            })
+
+        } catch (error) {
+            showAlert({
+                msg: error.response.data.msg,
+                error: true
+            })
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     return (
 
         <ProyectosContext.Provider
@@ -460,6 +571,10 @@ const ProyectosProvider = ({ children }) => {
                 submitCoworker,
                 coworker,
                 addCoworker,
+                handleModalDeleteCoworker,
+                modalDeleteCoworker,
+                deleteCoworker,
+                taskCompleted,
 
             }}
         >

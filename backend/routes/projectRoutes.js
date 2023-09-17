@@ -25,7 +25,7 @@ router.route('/:id')
 
 router.post('/coworkers', checkAuth, searchCoworker);
 router.post('/coworkers/:id', checkAuth, addCoworker);
-router.delete('/coworkers/:id', checkAuth, deleteCoworker);
+router.post('/delete-coworker/:id', checkAuth, deleteCoworker);
 
 // router.get('/tasks/:id', checkAuth, getTask)
 
