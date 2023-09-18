@@ -124,7 +124,7 @@ const FormProject = () => {
 
             <div className='mt-5'>
                 <label htmlFor="client" className='text-gray-700 uppercase font-bold text-sm'>
-                    Nombre del Proyecto
+                    Cliente
                 </label>
                 <input className='border-2 w-full mt-2 placeholder-gray-400 rounded-md '
                     type="text"

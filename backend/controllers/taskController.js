@@ -180,7 +180,7 @@ const upDateStateTask = async (req, res) => {
 
     if (beTask.projectRef.owner.toString() !== req.userReq._id.toString() &&
         //dice si no es el dueño del proeycto quien quiere cambiar el estado de la tarea accion no valida 
-        !beTask.projectRef.coworkercoworkers.some(coworker => coworker._id.toString() === req.userReq._id.toString())
+        !beTask.projectRef.coworkers.some(coworker => coworker._id.toString() === req.userReq._id.toString())
         // aqui valida que si laguno de la lista de id de colaboradores coinciade con el  id del path y miega todo
         // Dice si no es colaborador del proeycto accion no valida
     ) {
@@ -190,6 +190,7 @@ const upDateStateTask = async (req, res) => {
 
     try {
         beTask.state = !beTask.state
+        beTask.completed = req.userReq._id
         await beTask.save()
         res.json(beTask)
 

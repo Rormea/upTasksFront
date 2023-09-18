@@ -137,7 +137,9 @@ const deleteProject = async (req, res) => {
 
     try {
 
-        await beProject.deleteOne();
+        // await TasksM.deleteMany({ _id: { $in: beProject.tasks } })
+        // await beProject.deleteOne()
+        await Promise.allSettled([await TasksM.deleteMany({ _id: { $in: beProject.tasks } }), await beProject.deleteOne()])
         res.json({ msg: 'Project deleted successfully' });
 
     } catch (error) {
