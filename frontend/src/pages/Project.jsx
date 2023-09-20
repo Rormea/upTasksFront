@@ -27,7 +27,9 @@ const Project = () => {
     // console.log(projetAlone)
 
 
-    const { name, } = projetAlone
+    const { name, description } = projetAlone
+
+
 
     // const [modal, setModal] = useState(false)
 
@@ -42,6 +44,7 @@ const Project = () => {
         <div>
             <div className='flex justify-between'>
                 <h1 className='font-black text-3xl'>{name}</h1>
+                <p>{ }</p>
 
                 {adminOn && (
 
@@ -56,6 +59,8 @@ const Project = () => {
                     </div>
                 )}
             </div>
+
+            <p className='bg-white shadow mt-10 rounded-lg' >{description}</p>
 
             {adminOn && (
 

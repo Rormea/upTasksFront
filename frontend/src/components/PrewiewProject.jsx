@@ -9,7 +9,7 @@ const PrewiewProject = ({ project }) => {
     const { name, _id, client, owner } = project
 
     return (
-        <div className='border-b p-5 flex ' >
+        <div className='border-b p-5 flex flex-col sm:flex-row ' >
             <div className='flex-1  '>
                 <div className='' >
                     <span>{name}</span>

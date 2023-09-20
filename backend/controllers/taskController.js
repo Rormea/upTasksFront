@@ -192,7 +192,13 @@ const upDateStateTask = async (req, res) => {
         beTask.state = !beTask.state
         beTask.completed = req.userReq._id
         await beTask.save()
-        res.json(beTask)
+
+        const storedTask = await TasksM.findById(id)
+            .populate('projectRef')
+            .populate('completed')
+
+
+        res.json(storedTask)
 
 
     } catch (error) {

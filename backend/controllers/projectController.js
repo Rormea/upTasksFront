@@ -50,7 +50,10 @@ const getOneProject = async (req, res) => {
     };
     //Validar que el proyecto con ese id existe
     const beProject = await ProjectM.findById(id)
-        .populate('tasks')
+        .populate({
+            path: 'tasks',
+            populate: { path: 'completed', select: 'name' }
+        })
         .populate('coworkers', 'name email');
     if (!beProject) {
         const error = new Error('id not found');

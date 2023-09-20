@@ -20,6 +20,7 @@ const ProyectosProvider = ({ children }) => {
     const [modalDeleteTask, setModalDeleteTask] = useState(false)
     const [coworker, setCoworker] = useState({})
     const [modalDeleteCoworker, setModalDeleteCoworker] = useState(false)
+    const [search, setSearch] = useState(false)
 
     const navigate = useNavigate();
 
@@ -547,6 +548,13 @@ const ProyectosProvider = ({ children }) => {
     };
 
 
+    // Buscador de project
+
+    const handleSearch = () => {
+        setSearch(!search);
+    };
+
+
     return (
 
         <ProyectosContext.Provider
@@ -575,6 +583,9 @@ const ProyectosProvider = ({ children }) => {
                 modalDeleteCoworker,
                 deleteCoworker,
                 taskCompleted,
+                search,
+                handleSearch,
+
 
             }}
         >

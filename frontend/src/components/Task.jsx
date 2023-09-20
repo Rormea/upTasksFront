@@ -15,17 +15,18 @@ const Task = ({ task }) => {
                 <p className='mb-1 text-lg' >{task.description}</p>
                 <p className='mb-1 text-sm text-sky-600 font-bold' >{formatDate(task.deadline)}</p>
                 <p className='mb-1 text-gray-600' >Prioridad: {task.priority}</p>
+                {task.state && <p>Completado por: {task.completed.name}</p>}
             </div>
 
             <div className='lg:w-full w-1/2 my-2 ' >
                 {adminOn && (
 
-                    <button onClick={() => handleModalUpdateTask(task)} className='bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2'>Editar</button>
+                    <button onClick={() => handleModalUpdateTask(task)} className='bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 w-min-24 w-24 '>Editar</button>
                 )}
 
                 <button
                     onClick={() => taskCompleted(task._id)}
-                    className={` ${task.state ? 'bg-sky-600' : 'bg-gray-600'} p-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2`}
+                    className={` ${task.state ? 'bg-sky-600' : 'bg-gray-600'} p-3 text-white uppercase font-bold text-sm rounded-lg mr-2 mb-2 `}
                 >
                     {task.state ? 'Completa' : 'Imcompleta'}
                 </button>
