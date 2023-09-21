@@ -53,7 +53,7 @@ const PORT = process.env.PORT || 4000
 const server = app.listen(PORT, () => { console.log(`server listening on port ${PORT} `) });
 
 /////////////////////////////////////////////////////////////////
-////////////////////   SOCKET-IO  ///////////////////////////////
+//                      SOCKET-IO  
 /////////////////////////////////////////////////////////////////
 
 import { Server } from 'socket.io';
@@ -66,7 +66,13 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('Conect to socket io')
+    console.log('Conect to socket io');
 
+    //     // derfinir los eventos socket io
+    socket.on('Open project', (projectId) => {
+        socket.join(projectId);
+
+        // socket.emit('response', { name: 'copis' })
+    });
 });
 

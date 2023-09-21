@@ -8,6 +8,11 @@ import ModalDeleteTask from '../components/ModalDeleteTask';
 import Alert from '../components/Alert';
 import Coworker from '../components/Coworker';
 import ModalDeleteCoworker from '../components/ModalDeleteCoworker';
+import io from 'socket.io-client'
+
+
+
+let socket;
 
 
 const Project = () => {
@@ -23,6 +28,23 @@ const Project = () => {
     useEffect(() => {
         getProject(params.id)
     }, [])
+
+
+    // este useffect se ejecuta solo una vez cuando entramos a ver un proeycto
+    useEffect(() => {
+        socket = io(import.meta.env.VITE_BACKEND_URL);
+
+        socket.emit('Open project', params.id)
+    }, [])
+
+    // este useffect se ejecuta solo una vez cuando entramos a ver un proeycto
+    useEffect(() => {
+        socket.on('response', (person) => {
+            console.log(person)
+        })
+    })
+
+
 
     // console.log(projetAlone)
 

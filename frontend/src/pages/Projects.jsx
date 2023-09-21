@@ -1,17 +1,28 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import useProjects from '../hooks/useProjects'
 import PrewiewProject from '../components/PrewiewProject';
-
+import Alert from '../components/Alert'
 
 
 const Projects = () => {
 
     const { projects } = useProjects();
 
+    const { msg } = alert
+
+    // useEffect(() => {
+    //     socket = io(import.meta.env.VITE_BACKEND_URL);
+    //     socket.emit('proof', projects)
+    //     socket.on('response', (persona) => {
+    //         console.log('Desde el backend', persona);
+    //     });
+    // });
 
     return (
         <div>
             <h1 className='text-4xl font-black' >Proyectos</h1>
+
+            {msg && <Alert alert={alert} />}
 
             <div className='bg-white shadow mt-10 rounded-lg ' >
                 {projects.length ? projects.map(project => (
