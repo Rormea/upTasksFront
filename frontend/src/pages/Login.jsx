@@ -10,9 +10,9 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [alert, setAlert] = useState({});
+    const [alert, setAlert] = useState({})
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const { setAuth } = useAuth();
 
@@ -39,12 +39,16 @@ const Login = () => {
         }
 
         try {
+
             const { data } = await clientAxios.post('/users/login', { email, password });
             // console.log(data.token);
+
             setAlert({});
             localStorage.setItem('token', data.token);
             setAuth(data)
-            console.log(data)
+            // console.log(data)
+            navigate('/projects')
+
 
 
         } catch (error) {
@@ -52,7 +56,7 @@ const Login = () => {
             setAlert({ msg: error.response.data.msg, error: true });
         }
 
-        navigate('/projects')
+
     };
 
     const { msg } = alert
@@ -92,12 +96,16 @@ const Login = () => {
                     />
                 </div>
 
-                <input type="submit"
+                {/* <input type="submit"
                     value="Iniciar Sesión"
                     className='bg-sky-700 w-full py-3 text-white uppercase 
                     font-bold rounded-2xl hover:cursor-pointer hover:bg-sky-900 transition-colors'
 
-                />
+                /> */}
+
+                <button type='submit' >
+                    inicia gil
+                </button>
             </form>
 
             <nav className='lg:flex lg:justify-between' >

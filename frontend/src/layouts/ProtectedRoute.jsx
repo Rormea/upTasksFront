@@ -13,8 +13,10 @@ const ProtectedRoute = () => {
 
     return (
         <div>
-            {auth._id
-                ? (
+
+            {Object.values(auth).length > 0 ?
+                // console.log(Object.values(auth).length > 0)
+                (
                     <div className="bg-gay-100" >
                         <Header />
 

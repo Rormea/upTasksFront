@@ -2,6 +2,7 @@ import { useState, createContext, useEffect } from 'react'
 import clientAxios from '../config/clientAxios';
 import { useNavigate } from 'react-router-dom'
 import io from 'socket.io-client'
+import useAuth from '../hooks/useAuth';
 
 
 let socket;
@@ -24,6 +25,8 @@ const ProyectosProvider = ({ children }) => {
     const [search, setSearch] = useState(false)
 
     const navigate = useNavigate();
+
+    const { auth } = useAuth();
 
 
 
@@ -54,7 +57,7 @@ const ProyectosProvider = ({ children }) => {
         };
 
         getAllProjectShow();
-    }, []);
+    }, [auth]);
 
     useEffect(() => {
         socket = io(import.meta.env.VITE_BACKEND_URL);

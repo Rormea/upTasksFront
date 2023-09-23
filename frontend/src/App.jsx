@@ -21,7 +21,7 @@ function App() {
       <AuthProvider>
         <ProyectosProvider>
           <Routes>
-        // Areas de acceso Público
+            //// Areas de acceso Público
             <Route path='/' element={<AuthLayout />} >
 
               <Route index element={<Login />} />
@@ -34,16 +34,15 @@ function App() {
             </Route>
 
 
-        // Areas Privada con Auth
+            ///// Areas Privada con Auth
             <Route path='/projects' element={<ProtectedRoute />}>
               <Route index element={<Projects />} />
               <Route path='new-project' element={<NewProject />} />
               <Route path='new-coworker/:id' element={<NewCoworker />} />
               <Route path=':id' element={<Project />} />
               <Route path='update/:id' element={<EditProject />} />
-
-
             </Route>
+
           </Routes>
         </ProyectosProvider>
       </AuthProvider>
