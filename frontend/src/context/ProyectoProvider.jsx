@@ -1,9 +1,10 @@
 import { useState, createContext, useEffect } from 'react'
 import clientAxios from '../config/clientAxios';
 import { useNavigate } from 'react-router-dom'
+import io from 'socket.io-client'
 
 
-
+let socket;
 
 
 const ProyectosContext = createContext();
@@ -53,7 +54,11 @@ const ProyectosProvider = ({ children }) => {
         };
 
         getAllProjectShow();
-    });
+    }, []);
+
+    useEffect(() => {
+        socket = io(import.meta.env.VITE_BACKEND_URL);
+    }, []);
 
 
 
@@ -264,7 +269,7 @@ const ProyectosProvider = ({ children }) => {
         setTaskPro({})
     };
 
-    // Para hacer el submmit de tarea
+    // Para hacer el submmit de tarea y CREAR TAREA
 
     const submitTask = async (task) => {
 
@@ -285,23 +290,32 @@ const ProyectosProvider = ({ children }) => {
             //que no es editar es true ejecuta crear tarea si es false (else) ejecuta actulizar tarea
             if (!taskPro._id) {
                 const { data } = await clientAxios.post(`/tasks`, task, config);
-                // actulizar el proyecto con las nuevas tareas
-                const tasksInProject = { ...projetAlone }
-                tasksInProject.tasks = [...projetAlone.tasks, data]
-                setProjetAlone(tasksInProject)
+                // actulizar el proyecto con las nuevas tareas - - ->> las tres lineas de código ahora las va manejr el IO que hicimos
+                // pasandole la tarea en tiempo real
+                // const tasksInProject = { ...projetAlone }
+                // tasksInProject.tasks = [...projetAlone.tasks, data]
+                // setProjetAlone(tasksInProject)
+
+
+                // Socket io
+                socket.emit('new Task', data);
+
+
             } else {
                 const idTask = taskPro._id
                 const { data } = await clientAxios.put(`/tasks/${idTask}`, task, config)
+
+                socket.emit('update Task', data);
                 // console.log(taskPro, idTask, task)
                 // console.log(data)
                 // console.log(projetAlone)
-                const projectWithTaskUpdated = { ...projetAlone }
-                // // el objeto proyectoAlone tiene dentro un array que son las tareas
-                projectWithTaskUpdated.tasks = projectWithTaskUpdated.tasks.map(el => el._id === data._id ? data : el)
-                // console.log(projectWithTaskUpdated)
-                // em map dice que va iterar por ese arreglo de tareas dentro del proyecto, si el id es el mismo va chancar los datos
-                // con la nueva data y si no es igual simplmente va dejar la tarea tal cual
-                setProjetAlone(projectWithTaskUpdated)
+                // const projectWithTaskUpdated = { ...projetAlone }
+                // // // el objeto proyectoAlone tiene dentro un array que son las tareas
+                // projectWithTaskUpdated.tasks = projectWithTaskUpdated.tasks.map(el => el._id === data._id ? data : el)
+                // // console.log(projectWithTaskUpdated)
+                // // em map dice que va iterar por ese arreglo de tareas dentro del proyecto, si el id es el mismo va chancar los datos
+                // // con la nueva data y si no es igual simplmente va dejar la tarea tal cual
+                // setProjetAlone(projectWithTaskUpdated)
 
             }
 
@@ -351,14 +365,15 @@ const ProyectosProvider = ({ children }) => {
 
             const idTask = taskPro._id
 
-            const { data } = await clientAxios.delete(`/tasks/${idTask}`, config);
+            await clientAxios.delete(`/tasks/${idTask}`, config);
 
-            const projectWithTaskDeleted = { ...projetAlone }
-            projectWithTaskDeleted.tasks = projectWithTaskDeleted.tasks.filter(el => el._id !== idTask)
-            console.log(projectWithTaskDeleted)
-            setProjetAlone(projectWithTaskDeleted)
+            // Socket io
+            socket.emit('remove Task', taskPro);
+
             setModalDeleteTask(false)
             setTaskPro({})
+
+
 
             showAlert({
                 msg: "Tarea Eliminada",
@@ -366,6 +381,8 @@ const ProyectosProvider = ({ children }) => {
             })
 
             setAlert({})
+
+
 
         } catch (error) {
             console.log(error)
@@ -525,11 +542,14 @@ const ProyectosProvider = ({ children }) => {
 
             const { data } = await clientAxios.post(`/tasks/state/${id}`, {}, config);
 
+            // SOCKET
+            socket.emit('stateComplete change', data)
 
-            const projectWithTaskStateUpdated = { ...projetAlone }
-            // // el objeto proyectoAlone tiene dentro un array que son las tareas
-            projectWithTaskStateUpdated.tasks = projectWithTaskStateUpdated.tasks.map(el => el._id === data._id ? data : el)
-            setProjetAlone(projectWithTaskStateUpdated)
+
+            // const projectWithTaskStateUpdated = { ...projetAlone }
+            // // // el objeto proyectoAlone tiene dentro un array que son las tareas
+            // projectWithTaskStateUpdated.tasks = projectWithTaskStateUpdated.tasks.map(el => el._id === data._id ? data : el)
+            // setProjetAlone(projectWithTaskStateUpdated)
             setTaskPro({})
 
             showAlert({
@@ -554,6 +574,48 @@ const ProyectosProvider = ({ children }) => {
         setSearch(!search);
     };
 
+    //////////////////////////////////////
+    ///       SOCKET IO   /////////////////
+    //////////////////////////////////////
+
+    const createTaskIo = (newTask) => {
+
+        const tasksInProject = { ...projetAlone }
+        tasksInProject.tasks = [...tasksInProject.tasks, newTask]
+        setProjetAlone(tasksInProject)
+    };
+
+    const removeTaskIo = (removeTask) => {
+
+        const projectWithTaskDeleted = { ...projetAlone }
+        projectWithTaskDeleted.tasks = projectWithTaskDeleted.tasks.filter(el => el._id !== removeTask._id)
+        // console.log(projectWithTaskDeleted)
+        setProjetAlone(projectWithTaskDeleted)
+    };
+
+    const updateTaskIo = (updatedTask) => {
+
+        const projectWithTaskUpdated = { ...projetAlone }
+        projectWithTaskUpdated.tasks = projectWithTaskUpdated.tasks.map(task => task._id === updatedTask._id ? updatedTask : task)
+        setProjetAlone(projectWithTaskUpdated)
+    };
+
+    const changeStateTask = (taskWithStateChange) => {
+
+        const projectWithTaskStateUpdated = { ...projetAlone }
+        projectWithTaskStateUpdated.tasks = projectWithTaskStateUpdated.tasks.map(el => el._id === taskWithStateChange._id ? taskWithStateChange : el)
+        setProjetAlone(projectWithTaskStateUpdated)
+    };
+
+    //////////////////////////////////////
+    ///       CIERRE DE SECION   /////////
+    //////////////////////////////////////
+
+    const logOutProjects = () => {
+        setProjects([]);
+        setProjetAlone([]);
+        setAlert({});
+    };
 
     return (
 
@@ -585,8 +647,11 @@ const ProyectosProvider = ({ children }) => {
                 taskCompleted,
                 search,
                 handleSearch,
-
-
+                createTaskIo,
+                removeTaskIo,
+                updateTaskIo,
+                changeStateTask,
+                logOutProjects
             }}
         >
             {children}

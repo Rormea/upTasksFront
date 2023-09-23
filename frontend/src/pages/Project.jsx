@@ -19,7 +19,7 @@ const Project = () => {
 
     const params = useParams();
 
-    const { getProject, projetAlone, loading, handleModalTask, alert } = useProjects();
+    const { getProject, projetAlone, loading, handleModalTask, alert, createTaskIo, removeTaskIo, updateTaskIo, changeStateTask } = useProjects();
 
     const adminOn = useAdmin();
     // console.log(adminOn)
@@ -37,10 +37,33 @@ const Project = () => {
         socket.emit('Open project', params.id)
     }, [])
 
-    // este useffect se ejecuta solo una vez cuando entramos a ver un proeycto
+    //  , en todo momento esá escuchando
     useEffect(() => {
-        socket.on('response', (person) => {
-            console.log(person)
+        socket.on('added NewTask', (newTask) => {
+            // console.log(newTask)
+            if (newTask.projectRef === projetAlone._id) {
+                createTaskIo(newTask)
+            }
+        })
+
+        socket.on('remove Task', (removeTask) => {
+            if (removeTask.projectRef === projetAlone._id) {
+                removeTaskIo(removeTask)
+            }
+        })
+
+        socket.on('updated Task', (updatedTask) => {
+            // console.log(updatedTask)
+            if (updatedTask.projectRef._id === projetAlone._id) {
+                updateTaskIo(updatedTask)
+            }
+        })
+
+        socket.on('completed Task', (taskWithStateChange) => {
+            // console.log(taskWithStateChange)
+            if (taskWithStateChange.projectRef._id === projetAlone._id) {
+                changeStateTask(taskWithStateChange)
+            }
         })
     })
 
@@ -102,10 +125,15 @@ const Project = () => {
 
             <div className='bg-white shadow mt-10 rounded-lg' >
                 {projetAlone.tasks?.length ?
-                    projetAlone.tasks?.map(task => (
-                        <Task key={task._id} task={task} />
+                    projetAlone.tasks?.map(taskh => (
+
+                        < Task key={taskh._id} task={taskh} />
+
+
                     ))
                     : 'No hay tareas'}
+
+
             </div>
 
 

@@ -45,12 +45,14 @@ const Login = () => {
             localStorage.setItem('token', data.token);
             setAuth(data)
             console.log(data)
-            navigate('/projects')
+
 
         } catch (error) {
             console.log(error);
             setAlert({ msg: error.response.data.msg, error: true });
         }
+
+        navigate('/projects')
     };
 
     const { msg } = alert
@@ -94,6 +96,7 @@ const Login = () => {
                     value="Iniciar Sesión"
                     className='bg-sky-700 w-full py-3 text-white uppercase 
                     font-bold rounded-2xl hover:cursor-pointer hover:bg-sky-900 transition-colors'
+
                 />
             </form>
 
