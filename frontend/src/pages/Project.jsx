@@ -27,6 +27,7 @@ const Project = () => {
 
     useEffect(() => {
         getProject(params.id)
+
     }, [])
 
 
@@ -89,7 +90,6 @@ const Project = () => {
         <div>
             <div className='flex justify-between'>
                 <h1 className='font-black text-3xl'>{name}</h1>
-                <p>{ }</p>
 
                 {adminOn && (
 
@@ -106,6 +106,7 @@ const Project = () => {
             </div>
 
             <p className='bg-white shadow mt-10 rounded-lg' >{description}</p>
+
 
             {adminOn && (
 
@@ -125,9 +126,9 @@ const Project = () => {
 
             <div className='bg-white shadow mt-10 rounded-lg' >
                 {projetAlone.tasks?.length ?
-                    projetAlone.tasks?.map(taskh => (
+                    projetAlone.tasks?.map(task => (
 
-                        < Task key={taskh._id} task={taskh} />
+                        < Task key={task._id} task={task} />
 
 
                     ))

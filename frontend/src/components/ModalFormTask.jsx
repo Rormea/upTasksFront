@@ -52,10 +52,10 @@ const ModalFormTask = () => {
             return
         };
 
-
         await submitTask({ ...task, projectRef: params.id })
         setTask(initialTask)
         // handleModalTask();
+
     };
 
 

@@ -6,14 +6,13 @@ const PrewiewProject = ({ project }) => {
 
     const { auth } = useAuth();
 
-    const { name, _id, client, owner } = project
+    const { name, _id, client, owner, deadline } = project
 
     return (
         <div className='border-b p-5 flex flex-col sm:flex-row ' >
             <div className='flex-1  '>
                 <div className='' >
                     <span>{name}</span>
-
                     <span className='text-sm text-sky-600 uppercase' >{' - '} {client}</span>
 
                     {

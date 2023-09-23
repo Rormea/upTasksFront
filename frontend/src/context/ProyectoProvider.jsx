@@ -48,9 +48,7 @@ const ProyectosProvider = ({ children }) => {
                     }
                 };
                 const { data } = await clientAxios.get('/projects', config);
-
                 setProjects(data)
-
             } catch (error) {
                 console.log(error)
             }
@@ -111,6 +109,10 @@ const ProyectosProvider = ({ children }) => {
 
                 error: false
             })
+
+            setTimeout(() => {
+                navigate('/projects')
+            }, 4000)
 
         } catch (error) {
             console.log(error)
@@ -292,6 +294,7 @@ const ProyectosProvider = ({ children }) => {
             // console.log(!taskPro._id) da respuest true  dice si en task pro que es cuando doy click en editar no hay id quiere decir 
             //que no es editar es true ejecuta crear tarea si es false (else) ejecuta actulizar tarea
             if (!taskPro._id) {
+
                 const { data } = await clientAxios.post(`/tasks`, task, config);
                 // actulizar el proyecto con las nuevas tareas - - ->> las tres lineas de código ahora las va manejr el IO que hicimos
                 // pasandole la tarea en tiempo real
@@ -306,6 +309,7 @@ const ProyectosProvider = ({ children }) => {
 
             } else {
                 const idTask = taskPro._id
+
                 const { data } = await clientAxios.put(`/tasks/${idTask}`, task, config)
 
                 socket.emit('update Task', data);
@@ -330,7 +334,6 @@ const ProyectosProvider = ({ children }) => {
         } finally {
             setLoading(false)
         }
-
     };
 
 

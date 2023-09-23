@@ -52,6 +52,8 @@ const FormProject = () => {
         setValuePro({ ...valuePro, [key]: value })
     };
 
+    console.log(valuePro)
+
 
 
 
@@ -67,10 +69,12 @@ const FormProject = () => {
         };
         // pasar todo al provider
         await submitProject({ ...valuePro, paramsId });
-
+        console.log(valuePro)
         setValuePro(initialProjectState)
         setParamsId(null);
     };
+
+
 
 
     const { msg } = alert

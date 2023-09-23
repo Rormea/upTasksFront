@@ -1,4 +1,4 @@
-import { formatDate } from "../helpers/formatDate"
+
 import useProjects from '../hooks/useProjects'
 import useAdmin from "../hooks/useAdmin";
 
@@ -13,7 +13,7 @@ const Task = ({ task }) => {
             <div className='lg:w-full w-1/2 my-2' >
                 <p className='mb-1 text-xl  font-bold text-sky-600' >{task.name}</p>
                 <p className='mb-1 text-lg' >{task.description}</p>
-                <p className='mb-1 text-sm text-sky-600 font-bold' >{formatDate(task.deadline)}</p>
+                <p className='mb-1 text-sm text-sky-600 font-bold' >{task.deadline.split('T')[0]}</p>
                 <p className='mb-1 text-gray-600' >Prioridad: {task.priority}</p>
                 {task.state && <p>Completado por: {task.completed.name}</p>}
             </div>
