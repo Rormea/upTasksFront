@@ -1,11 +1,14 @@
 import nodemailer from 'nodemailer';
 
+/// PARA REGISTRASE //
+
 export const sinUpEmail = async (datos) => {
     const { name, email, token } = datos;
 
     const transport = nodemailer.createTransport({
         host: process.env.EMAIL_HOST,
         port: process.env.EMAIL_PORT,
+        secure: true,
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS
@@ -17,7 +20,7 @@ export const sinUpEmail = async (datos) => {
     const infoEmail = {
         from: '"UpTask - Project Manager" <cuentas@uptask.com>',
         to: email,
-        subject: "Project Manager Recovery Password",
+        subject: "Project Uptask Confirm your account",
         text: "validate your uptask account please",
         html: `
             <p> Hola: ${name} valida tu cuenta en upTask</p>
@@ -52,8 +55,8 @@ export const changePassword = async (datos) => {
     const infoEmail = {
         from: '"UpTask - Project Manager" <cuentas@uptask.com>',
         to: email,
-        subject: "Reestablece tu password",
-        text: "Reestablece tu password",
+        subject: "Restablece tu password",
+        text: "Restablece tu password",
         html: `
             <p> Hola: ${name} reestablece el password  de tu cuenta en upTask</p>
             <p>Reestablece tu password dando click en el enlace:</p>

@@ -17,16 +17,14 @@ function ConfirmAccount() {
                 const url = `/users/confirm-account/${id}`
                 // console.log(url)
                 const { data } = await clientAxios.get(url)
-                console.log(data.msg)
+                // console.log(data.msg)
                 setAlert(
                     {
                         msg: data.msg,
                         error: false
                     }
                 )
-
                 setAccountConfirm(true);
-
             } catch (error) {
                 setAlert(
                     {

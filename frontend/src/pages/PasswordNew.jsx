@@ -56,7 +56,7 @@ const PasswordNew = () => {
         if (passwordPattern.test(password) === false) {
             setAlert(
                 {
-                    msg: 'Password debe ser mayor a 5 dígitos, No usar caracteres especiales',
+                    msg: 'Password debe ser mayor a 5 dígitos, tener al menos un número y no usar caracteres especiales',
                     error: true
                 }
             );

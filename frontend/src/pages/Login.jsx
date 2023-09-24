@@ -28,7 +28,7 @@ const Login = () => {
 
         const passwordPattern = /^(?=.*[0-9])(?!.*[!@#$%^&*()_+[\]{}|;:',.<>?\\\/]).{6,}$/;
         if (passwordPattern.test(password) === false) {
-            setAlert({ msg: 'Password debe ser mayor a 5 dígitos, No usar caracteres especiales', error: true });
+            setAlert({ msg: 'Password debe ser mayor a 5 dígitos, tener al menos un número y no usar caracteres especiales', error: true });
             return
         }
 
@@ -96,16 +96,12 @@ const Login = () => {
                     />
                 </div>
 
-                {/* <input type="submit"
+                <input type="submit"
                     value="Iniciar Sesión"
                     className='bg-sky-700 w-full py-3 text-white uppercase 
                     font-bold rounded-2xl hover:cursor-pointer hover:bg-sky-900 transition-colors'
+                />
 
-                /> */}
-
-                <button type='submit' >
-                    inicia gil
-                </button>
             </form>
 
             <nav className='lg:flex lg:justify-between' >
