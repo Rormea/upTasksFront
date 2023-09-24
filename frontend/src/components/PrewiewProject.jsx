@@ -8,7 +8,6 @@ const PrewiewProject = ({ project }) => {
 
     const { name, _id, client, owner, deadline } = project
 
-    console.log(auth._id, owner)
 
     return (
         <div className='border-b p-5 flex flex-col sm:flex-row ' >
