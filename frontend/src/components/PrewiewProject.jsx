@@ -8,12 +8,16 @@ const PrewiewProject = ({ project }) => {
 
     const { name, _id, client, owner, deadline } = project
 
+    console.log(auth._id, owner)
+
     return (
         <div className='border-b p-5 flex flex-col sm:flex-row ' >
             <div className='flex-1  '>
                 <div className='' >
                     <span>{name}</span>
                     <span className='text-sm text-sky-600 uppercase' >{' - '} {client}</span>
+
+
 
                     {
                         auth._id !== owner && (

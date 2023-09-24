@@ -46,7 +46,6 @@ const Login = () => {
             setAlert({});
             localStorage.setItem('token', data.token);
             setAuth(data)
-            // console.log(data)
             navigate('/projects')
 
 
@@ -58,6 +57,7 @@ const Login = () => {
 
 
     };
+
 
     const { msg } = alert
 

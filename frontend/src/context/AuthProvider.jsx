@@ -39,7 +39,6 @@ const AuthProvider = ({ children }) => {
                 // console.log(data)
 
                 setAuth(data)
-                // navigate('/projects')
 
             } catch (error) {
                 console.log(error)

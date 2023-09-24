@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Alert from '../components/Alert';
 import clientAxios from '../config/clientAxios';
+import useProjects from '../hooks/useProjects';
 
 function ConfirmAccount() {
 
-    const [alert, setAlert] = useState({})
+    // const [alert, setAlert] = useState({})
     const [accountConfirm, setAccountConfirm] = useState(false)
+    const { showAlert } = useProjects();
 
     const params = useParams();
     const { id } = params
@@ -18,7 +20,7 @@ function ConfirmAccount() {
                 // console.log(url)
                 const { data } = await clientAxios.get(url)
                 // console.log(data.msg)
-                setAlert(
+                showAlert(
                     {
                         msg: data.msg,
                         error: false
@@ -26,7 +28,7 @@ function ConfirmAccount() {
                 )
                 setAccountConfirm(true);
             } catch (error) {
-                setAlert(
+                showAlert(
                     {
                         msg: error.response.data.msg,
                         error: true

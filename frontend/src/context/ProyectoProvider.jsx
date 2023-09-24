@@ -57,12 +57,18 @@ const ProyectosProvider = ({ children }) => {
         getAllProjectShow();
     }, [auth]);
 
+    ///////////////////////////////////////
+    /// CONECT SOCKET IO ///////////////////
+    //////////////////////////////////////
+
     useEffect(() => {
         socket = io(import.meta.env.VITE_BACKEND_URL);
     }, []);
 
 
-
+    ///////////////////////////////////////
+    /// showAlert      //////////////////
+    //////////////////////////////////////
     const showAlert = (alert) => {
         setAlert(alert);
 

@@ -75,6 +75,7 @@ const auth = async (req, res) => {
     if (await beuser.verifyPass(password)) {
 
         res.json({
+            _id: beuser._id,
             name: beuser.name,
             email: beuser.email,
             token: generateJWT(beuser.id)
