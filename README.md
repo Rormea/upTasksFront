@@ -1,22 +1,8 @@
-# uptasks
+# React + Vite
 
-PROYECTO MERN: Administrador de Proyectos y Tareas
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Proyecto que imita el estilo de apps web como  Basecamp, Asana o Trello con esta App permite a los usuarios crear su cuenta, iniciar sesión y comenzar a crear proyectos y asignarles tareas, los usuarios podrán marcar y desmarcar tareas finalizadas y tendrá todas las opciones del CRUD (Crear Leer Actualizar y Borrar)
-El Proyecto utiliza MERN STACK:
+Currently, two official plugins are available:
 
-FRONTEND:
-React
-Vite
-Tailwind CSS
-Headless UI
-Context API
-Socket. IO
-
-BACKEND:
-Node.js
-Express.js
-MongoDB
-Postman
-Mongoose ORM
-Socket. IO
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
