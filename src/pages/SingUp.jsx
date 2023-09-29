@@ -32,6 +32,12 @@ const SingUp = () => {
             return
         };
 
+        const passwordPattern = /^(?=.*[0-9])(?!.*[!@#$%^&*()_+[\]{}|;:',.<>?\\\/]).{6,}$/;
+        if (passwordPattern.test(valueSingUp.password) === false) {
+            setAlert({ msg: 'Password debe ser mayor a 5 dígitos, tener al menos un número y no usar caracteres especiales', error: true });
+            return
+        }
+
         if (valueSingUp.password !== valueSingUp.repeatPass) {
             setAlert({
                 msg: "Las contraseñas de registro no coinciden",
